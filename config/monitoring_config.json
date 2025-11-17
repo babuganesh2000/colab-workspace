@@ -1,0 +1,71 @@
+{
+  "enable_prometheus": true,
+  "enable_cloud_monitoring": true,
+  "prometheus_port": 8000,
+  "gcp_project": "your-healthcare-ml-project",
+  
+  "alert_thresholds": {
+    "accuracy_drop": 0.05,
+    "latency_threshold": 1.0,
+    "error_rate_threshold": 0.01,
+    "drift_threshold": 0.1,
+    "memory_usage_threshold": 0.8,
+    "cpu_usage_threshold": 0.8
+  },
+  
+  "alert_channels": {
+    "email": {
+      "enabled": false,
+      "smtp_server": "smtp.gmail.com",
+      "smtp_port": 587,
+      "sender_email": "alerts@yourcompany.com",
+      "sender_password": "${EMAIL_PASSWORD}",
+      "recipients": [
+        "ml-team@yourcompany.com",
+        "devops@yourcompany.com"
+      ]
+    },
+    "slack": {
+      "enabled": false,
+      "webhook_url": "${SLACK_WEBHOOK_URL}",
+      "channel": "#ml-alerts"
+    },
+    "pagerduty": {
+      "enabled": false,
+      "integration_key": "${PAGERDUTY_INTEGRATION_KEY}",
+      "severity": "warning"
+    }
+  },
+  
+  "monitoring_intervals": {
+    "health_check": 30,
+    "drift_detection": 3600,
+    "performance_evaluation": 1800,
+    "resource_monitoring": 60
+  },
+  
+  "data_drift_config": {
+    "reference_window_days": 30,
+    "comparison_window_days": 7,
+    "statistical_tests": ["ks_test", "chi2_test"],
+    "features_to_monitor": [
+      "age", "bmi", "exercise_hours", "stress_level",
+      "resting_bp", "cholesterol", "max_heart_rate"
+    ]
+  },
+  
+  "performance_monitoring": {
+    "track_prediction_distribution": true,
+    "track_feature_importance": true,
+    "track_model_confidence": true,
+    "batch_size_for_analysis": 1000
+  },
+  
+  "logging": {
+    "level": "INFO",
+    "format": "%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    "file_path": "monitoring.log",
+    "max_file_size": "100MB",
+    "backup_count": 5
+  }
+}

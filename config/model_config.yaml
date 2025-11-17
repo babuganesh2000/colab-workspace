@@ -1,0 +1,329 @@
+# Healthcare ML Model Configuration
+
+# Model Configuration
+model_config:
+  classification:
+    algorithm: "RandomForestClassifier"
+    hyperparameters:
+      n_estimators: 100
+      max_depth: 10
+      min_samples_split: 5
+      min_samples_leaf: 2
+      random_state: 42
+    
+    # Hyperparameter tuning ranges
+    tuning_ranges:
+      n_estimators: [50, 100, 200]
+      max_depth: [5, 10, 15, 20]
+      min_samples_split: [2, 5, 10]
+      min_samples_leaf: [1, 2, 4]
+    
+    # Performance thresholds
+    thresholds:
+      accuracy: 0.80
+      precision: 0.75
+      recall: 0.75
+      f1: 0.75
+      auc: 0.80
+
+  regression:
+    algorithm: "RandomForestRegressor"
+    hyperparameters:
+      n_estimators: 100
+      max_depth: 10
+      min_samples_split: 5
+      min_samples_leaf: 2
+      random_state: 42
+    
+    # Hyperparameter tuning ranges
+    tuning_ranges:
+      n_estimators: [50, 100, 200]
+      max_depth: [5, 10, 15, 20]
+      min_samples_split: [2, 5, 10]
+      min_samples_leaf: [1, 2, 4]
+    
+    # Performance thresholds
+    thresholds:
+      r2: 0.70
+      mae: 15.0  # Mean Absolute Error threshold
+      rmse: 20.0  # Root Mean Squared Error threshold
+
+# Data Configuration
+data_config:
+  classification:
+    target_variable: "heart_disease"
+    features:
+      - "age"
+      - "sex"
+      - "chest_pain_type"
+      - "resting_bp"
+      - "cholesterol"
+      - "fasting_bs"
+      - "resting_ecg"
+      - "max_heart_rate"
+      - "exercise_angina"
+      - "st_depression"
+    
+    # Data generation parameters
+    generation:
+      n_samples: 1000
+      test_size: 0.2
+      validation_size: 0.2
+      random_state: 42
+    
+    # Data validation rules
+    validation:
+      age: [20, 80]
+      sex: [0, 1]
+      chest_pain_type: [0, 3]
+      resting_bp: [80, 200]
+      cholesterol: [100, 400]
+      fasting_bs: [0, 1]
+      resting_ecg: [0, 2]
+      max_heart_rate: [60, 220]
+      exercise_angina: [0, 1]
+      st_depression: [0, 6]
+
+  regression:
+    target_variable: "systolic_bp"
+    features:
+      - "age"
+      - "bmi"
+      - "exercise_hours"
+      - "smoking"
+      - "alcohol"
+      - "stress_level"
+      - "sleep_hours"
+      - "family_history"
+      - "sodium_intake"
+    
+    # Data generation parameters
+    generation:
+      n_samples: 1000
+      test_size: 0.2
+      validation_size: 0.2
+      random_state: 42
+    
+    # Data validation rules
+    validation:
+      age: [20, 80]
+      bmi: [15, 45]
+      exercise_hours: [0, 10]
+      smoking: [0, 1]
+      alcohol: [0, 1]
+      stress_level: [1, 10]
+      sleep_hours: [4, 12]
+      family_history: [0, 1]
+      sodium_intake: [1000, 5000]
+
+# MLOps Configuration
+mlops_config:
+  # Experiment tracking
+  experiment_tracking:
+    backend: "mlflow"
+    tracking_uri: "sqlite:///mlflow.db"
+    experiment_name: "healthcare_ml_experiments"
+    
+  # Model registry
+  model_registry:
+    backend: "mlflow"
+    staging_stage: "Staging"
+    production_stage: "Production"
+    
+  # Data storage
+  data_storage:
+    type: "cloud_storage"
+    bucket_name: "healthcare-ml-data"
+    path_prefix: "datasets"
+    
+  # Model storage
+  model_storage:
+    type: "cloud_storage"
+    bucket_name: "healthcare-ml-models"
+    path_prefix: "models"
+    
+  # Monitoring
+  monitoring:
+    enable_drift_detection: true
+    drift_threshold: 0.1
+    performance_degradation_threshold: 0.05
+    alert_endpoints:
+      - type: "email"
+        address: "ml-team@company.com"
+      - type: "slack"
+        webhook_url: "${SLACK_WEBHOOK_URL}"
+
+# Deployment Configuration
+deployment_config:
+  staging:
+    platform: "cloud_run"
+    region: "us-central1"
+    service_name: "healthcare-ml-staging"
+    
+    # Resource allocation
+    cpu: "1"
+    memory: "2Gi"
+    max_instances: 10
+    min_instances: 0
+    
+    # Environment variables
+    environment_variables:
+      ENVIRONMENT: "staging"
+      LOG_LEVEL: "INFO"
+      MODEL_VERSION: "latest"
+    
+    # Health check
+    health_check:
+      path: "/health"
+      interval: 30
+      timeout: 10
+      retries: 3
+    
+    # Auto-scaling
+    scaling:
+      target_cpu_utilization: 70
+      target_memory_utilization: 80
+
+  production:
+    platform: "cloud_run"
+    region: "us-central1"
+    service_name: "healthcare-ml-prod"
+    
+    # Resource allocation
+    cpu: "2"
+    memory: "4Gi"
+    max_instances: 100
+    min_instances: 1
+    
+    # Environment variables
+    environment_variables:
+      ENVIRONMENT: "production"
+      LOG_LEVEL: "WARNING"
+      MODEL_VERSION: "v1.0.0"
+    
+    # Health check
+    health_check:
+      path: "/health"
+      interval: 30
+      timeout: 10
+      retries: 3
+    
+    # Auto-scaling
+    scaling:
+      target_cpu_utilization: 60
+      target_memory_utilization: 70
+
+# Testing Configuration
+testing_config:
+  unit_tests:
+    test_directory: "tests/"
+    coverage_threshold: 80
+    
+  integration_tests:
+    test_environment: "staging"
+    test_data_size: 100
+    
+  performance_tests:
+    max_prediction_time: 100  # milliseconds
+    max_batch_size: 1000
+    throughput_threshold: 100  # requests per second
+    
+  data_validation_tests:
+    schema_validation: true
+    data_quality_checks: true
+    drift_detection: true
+
+# Security Configuration
+security_config:
+  authentication:
+    required: true
+    type: "api_key"
+    
+  authorization:
+    rbac_enabled: true
+    roles:
+      - name: "admin"
+        permissions: ["read", "write", "deploy"]
+      - name: "developer"
+        permissions: ["read", "write"]
+      - name: "viewer"
+        permissions: ["read"]
+    
+  data_privacy:
+    enable_encryption: true
+    pii_detection: true
+    audit_logging: true
+    
+  compliance:
+    hipaa_compliant: true
+    gdpr_compliant: true
+    audit_retention_days: 365
+
+# Logging Configuration
+logging_config:
+  level: "INFO"
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  
+  handlers:
+    - type: "console"
+      level: "INFO"
+    - type: "file"
+      level: "DEBUG"
+      filename: "healthcare_ml.log"
+      max_bytes: 10485760  # 10MB
+      backup_count: 5
+    - type: "cloud_logging"
+      level: "WARNING"
+      project_id: "${GCP_PROJECT_ID}"
+
+# Feature Engineering Configuration
+feature_engineering:
+  classification:
+    scaling:
+      method: "standard"  # standard, minmax, robust
+      features: ["age", "resting_bp", "cholesterol", "max_heart_rate", "st_depression"]
+    
+    encoding:
+      categorical_features: ["sex", "chest_pain_type", "fasting_bs", "resting_ecg", "exercise_angina"]
+      method: "label"  # label, onehot
+    
+    feature_selection:
+      method: "mutual_info"
+      k_best: 8
+    
+  regression:
+    scaling:
+      method: "standard"
+      features: ["age", "bmi", "exercise_hours", "stress_level", "sleep_hours", "sodium_intake"]
+    
+    encoding:
+      categorical_features: ["smoking", "alcohol", "family_history"]
+      method: "label"
+    
+    feature_selection:
+      method: "f_regression"
+      k_best: 7
+
+# Pipeline Configuration
+pipeline_config:
+  # Training pipeline
+  training:
+    enable_hyperparameter_tuning: true
+    cross_validation_folds: 5
+    random_search_iterations: 50
+    
+  # Validation pipeline
+  validation:
+    enable_statistical_tests: true
+    significance_level: 0.05
+    
+  # Deployment pipeline
+    automatic_deployment: false
+    approval_required: true
+    rollback_on_failure: true
+    
+  # Monitoring pipeline
+  monitoring:
+    batch_prediction_monitoring: true
+    real_time_monitoring: true
+    alert_threshold_breaches: true

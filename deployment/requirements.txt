@@ -1,0 +1,36 @@
+# API Dependencies
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+pydantic==2.5.0
+
+# Core ML Dependencies
+scikit-learn==1.3.2
+pandas==2.1.3
+numpy==1.24.3
+
+# MLOps Dependencies
+mlflow==2.8.1
+
+# Cloud Dependencies
+google-cloud-storage==2.10.0
+google-cloud-run==0.10.1
+
+# Deployment Dependencies
+docker==6.1.3
+
+# Testing Dependencies
+pytest==7.4.3
+pytest-cov==4.1.0
+
+# Monitoring Dependencies
+prometheus-client==0.19.0
+
+# Utility Dependencies
+pyyaml==6.0.1
+requests==2.31.0
+python-dotenv==1.0.0
+
+# Development Dependencies
+black==23.11.0
+flake8==6.1.0
+mypy==1.7.1

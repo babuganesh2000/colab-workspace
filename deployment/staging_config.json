@@ -1,0 +1,28 @@
+{
+  "gcp_project": "your-healthcare-ml-project",
+  "region": "us-central1",
+  "service_name": "healthcare-ml-staging",
+  "image_name": "healthcare-ml-api",
+  "cpu": "1",
+  "memory": "2Gi",
+  "max_instances": 10,
+  "min_instances": 0,
+  "environment_variables": {
+    "ENVIRONMENT": "staging",
+    "LOG_LEVEL": "INFO",
+    "MODEL_VERSION": "latest"
+  },
+  "health_check": {
+    "path": "/health",
+    "interval_seconds": 30,
+    "timeout_seconds": 10,
+    "failure_threshold": 3
+  },
+  "scaling": {
+    "target_cpu_utilization": 70,
+    "target_memory_utilization": 80
+  },
+  "traffic_allocation": {
+    "percent": 100
+  }
+}
